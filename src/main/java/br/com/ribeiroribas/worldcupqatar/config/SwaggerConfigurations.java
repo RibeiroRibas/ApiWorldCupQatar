@@ -15,7 +15,7 @@ public class SwaggerConfigurations {
     public GroupedOpenApi costumerApi() {
         return GroupedOpenApi.builder()
                 .group("World Cup Qatar")
-                .pathsToMatch("/team/**","/qatar/*")
+                .pathsToMatch("/qatar","/qatar/*")
                 .build();
     }
 

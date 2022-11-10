@@ -5,16 +5,16 @@ import javax.validation.constraints.NotNull;
 public class UpdateDataDto {
 
     @NotNull
-    private String round;
+    private String fileName;
     @NotNull
     private String data;
 
-    public String getRound() {
-        return round;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setRound(String round) {
-        this.round = round;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getData() {

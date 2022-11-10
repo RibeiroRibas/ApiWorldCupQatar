@@ -2,12 +2,71 @@ package br.com.ribeiroribas.worldcupqatar.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Match {
 
     private String team1;
     private Integer scoreTeam1;
     private String team2;
     private Integer scoreTeam2;
+    private LocalTime matchTime;
+    private String groupTeam1;
+    private String groupTeam2;
+    private LocalDate date;
+
+    public Match() {
+    }
+
+    public Match(QatarCupMatch qatarCupMatch) {
+        this.team1 = qatarCupMatch.getTeam1();
+        this.scoreTeam1 = qatarCupMatch.getScoreTeam1();
+        this.team2 = qatarCupMatch.getTeam2();
+        this.scoreTeam2 = qatarCupMatch.getScoreTeam2();
+        this.matchTime = qatarCupMatch.getMatchTime();
+        this.groupTeam1 = qatarCupMatch.getGroupTeam1();
+        this.groupTeam2 = qatarCupMatch.getGroupTeam2();
+        this.date = qatarCupMatch.getMatchDate();
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public static List<Match> convert(List<QatarCupMatch> cupMatchesByDate) {
+        return cupMatchesByDate.stream().map(Match::new).collect(Collectors.toList());
+    }
+
+    public String getGroupTeam2() {
+        return groupTeam2;
+    }
+
+    public void setGroupTeam2(String groupTeam2) {
+        this.groupTeam2 = groupTeam2;
+    }
+
+    public String getGroupTeam1() {
+        return groupTeam1;
+    }
+
+    public void setGroupTeam1(String groupTeam1) {
+        this.groupTeam1 = groupTeam1;
+    }
+
+    public LocalTime getMatchTime() {
+        return matchTime;
+    }
+
+    public void setMatchTime(LocalTime matchTime) {
+        this.matchTime = matchTime;
+    }
 
     public String getTeam1() {
         return team1;
@@ -103,6 +162,8 @@ public class Match {
                 ", scoreTeam1=" + scoreTeam1 +
                 ", team2='" + team2 + '\'' +
                 ", scoreTeam2=" + scoreTeam2 +
+                ", matchTime=" + matchTime +
+                ", group=" + groupTeam1 +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package br.com.ribeiroribas.worldcupqatar;
 
-import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
+import br.com.ribeiroribas.worldcupqatar.controller.dto.MatchesByDateDto;
+import br.com.ribeiroribas.worldcupqatar.model.Match;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-
-import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionMessages.INVALID_ROUND_NUMBER;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,24 +30,31 @@ public class WorldCupMatchesControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    public void shouldReturnWorldCupGamesByRound() throws Exception {
+    public void shouldReturnWorldCupMatchesByDate() throws Exception {
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                        .get("/qatar/" + "1")
+                        .get("/qatar/" + LocalDate.of(2022, 11, 22))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        List<QatarCupMatch> cupMatches = Arrays.asList(mapper.readValue(mvcResult.getResponse().getContentAsString(), QatarCupMatch[].class));
+        MatchesByDateDto cupMatches = mapper.readValue(mvcResult.getResponse().getContentAsString(), MatchesByDateDto.class);
 
-        cupMatches.forEach(System.out::println);
+        System.out.println(cupMatches);
 
     }
+
     @Test
-    public void shouldReturnStatusNotFoundWhenRoundNumberIsInvalid() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/qatar/" + "Invalid Round")
+    public void shouldReturnAllWorldCupMatches() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/qatar")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(INVALID_ROUND_NUMBER));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        List<Match> cupMatches = Arrays.asList(mapper.readValue(mvcResult.getResponse().getContentAsString(), Match[].class));
+
+        System.out.println(cupMatches);
+
     }
+
 }

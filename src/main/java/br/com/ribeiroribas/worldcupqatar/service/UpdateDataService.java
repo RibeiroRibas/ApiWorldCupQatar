@@ -1,6 +1,5 @@
 package br.com.ribeiroribas.worldcupqatar.service;
 
-import br.com.ribeiroribas.worldcupqatar.controller.dto.TeamsDto;
 import br.com.ribeiroribas.worldcupqatar.controller.dto.UpdateDataDto;
 import br.com.ribeiroribas.worldcupqatar.controller.exceptions.DataScrapingErrorException;
 import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
@@ -21,27 +20,21 @@ import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionM
 @Service
 public class UpdateDataService {
 
-
-    @Autowired
-    private TeamService teamService;
     @Autowired
     private FilesService filesService;
 
-    public List<TeamsDto> update(UpdateDataDto dataDto) throws IOException {
+    public void update(UpdateDataDto dataDto) throws IOException {
 
-        List<QatarCupMatch> cupMatches = getDataScraping(dataDto.getData());
+        List<QatarCupMatch> cupMatches = getDataScraping(dataDto);
 
-        String fileName = filesService.getFileName(dataDto.getRound());
-        filesService.writeData(cupMatches, fileName);
-
-        return teamService.getCupMatchesByRound(dataDto.getRound());
+        filesService.writeData(cupMatches, dataDto.getFileName());
     }
 
-    private List<QatarCupMatch> getDataScraping(String data) {
+    private List<QatarCupMatch> getDataScraping(UpdateDataDto data) {
 
         List<QatarCupMatch> cupMatches = new ArrayList<>();
 
-        List<Element> elementMatch = getElementsByClass(data);
+        List<Element> elementMatch = getElementsByClass(data.getData());
 
         elementMatch.forEach(match -> {
             QatarCupMatch cupMatch = new QatarCupMatch();
@@ -50,10 +43,16 @@ public class UpdateDataService {
                 String team1 = match.getElementsByClass("event__participant event__participant--home").first().text();
                 cupMatch.setTeam1(team1);
 
+                String groupTeam1 = filesService.getGroup(team1);
+                cupMatch.setGroupTeam1(groupTeam1);
+
                 setScoreTeam1(match, cupMatch);
 
                 String team2 = match.getElementsByClass("event__participant event__participant--away").first().text();
                 cupMatch.setTeam2(team2);
+
+                String groupTeam2 = filesService.getGroup(team2);
+                cupMatch.setGroupTeam2(groupTeam2);
 
                 setScoreTeam2(match, cupMatch);
 
@@ -64,11 +63,14 @@ public class UpdateDataService {
 
                 setMatchTime(cupMatch, chars);
 
+                cupMatch.setStage(filesService.getStageName(data.getFileName()));
+
                 cupMatches.add(cupMatch);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new DataScrapingErrorException(THE_UPDATE_FILE_IS_INVALID);
             }
         });
+
         return cupMatches;
     }
 
@@ -88,7 +90,7 @@ public class UpdateDataService {
                 )
         );
 
-        if(elementMatch.isEmpty())
+        if (elementMatch.isEmpty())
             throw new DataScrapingErrorException(THE_UPDATE_FILE_IS_INVALID);
 
         return elementMatch;

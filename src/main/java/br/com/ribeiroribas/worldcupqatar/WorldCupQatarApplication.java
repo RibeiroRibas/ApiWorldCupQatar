@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CopaqatarApplication {
+public class WorldCupQatarApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CopaqatarApplication.class, args);
+		SpringApplication.run(WorldCupQatarApplication.class, args);
 
 	}
 
