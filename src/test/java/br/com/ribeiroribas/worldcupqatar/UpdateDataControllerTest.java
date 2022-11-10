@@ -30,7 +30,7 @@ public class UpdateDataControllerTest {
     public void shouldUpdateCupResultsThenReturnStatusOkAndUpdatedData() throws Exception {
         UpdateDataDto updateDataDto = new UpdateDataDto();
         updateDataDto.setData(WORLD_CUP_MATCHES);
-        updateDataDto.setFileName("groupStage.txt");
+        updateDataDto.setFileName("target/classes/groupstage.txt");
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/update")
                         .content(mapper.writeValueAsString(updateDataDto))
@@ -42,7 +42,7 @@ public class UpdateDataControllerTest {
     public void shouldReturnStatusNotFoundWhenUpdateDataIsInvalid() throws Exception{
         UpdateDataDto updateDataDto = new UpdateDataDto();
         updateDataDto.setData("Invalid Data");
-        updateDataDto.setFileName("groupStage.txt");
+        updateDataDto.setFileName("target/classes/groupstage.txt");
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/update")
                         .content(mapper.writeValueAsString(updateDataDto))

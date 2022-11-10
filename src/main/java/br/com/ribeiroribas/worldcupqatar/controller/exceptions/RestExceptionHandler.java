@@ -14,4 +14,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseHandler.generateResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ResourceFileException.class)
+    private ResponseEntity<Object> handleResourceFileError(ResourceFileException ex) {
+        return ResponseHandler.generateResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
 }

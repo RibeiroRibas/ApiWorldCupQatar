@@ -1,6 +1,7 @@
 package br.com.ribeiroribas.worldcupqatar.service;
 
 import br.com.ribeiroribas.worldcupqatar.controller.exceptions.DataScrapingErrorException;
+import br.com.ribeiroribas.worldcupqatar.controller.exceptions.ResourceFileException;
 import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -10,16 +11,17 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.*;
 
+import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionMessages.THE_RESOURCE_FILE_IS_INVALID;
 import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionMessages.THE_UPDATE_FILE_IS_INVALID;
 
 @Service
 public class FilesService {
 
-    protected static final String GROUP_STAGE_TXT = "groupStage.txt";
-    protected static final String ROUND_OF_16_TXT = "roundOf16.txt";
-    protected static final String ROUND_OF_8_TXT = "roundOf8.txt";
-    protected static final String SEMI_FINAL_TXT = "semiFinal.txt";
-    protected static final String FINAL_TXT = "final.txt";
+    protected static final String GROUP_STAGE_TXT = "/groupstage.txt";
+    protected static final String ROUND_OF_16_TXT = "/roundOf16.txt";
+    protected static final String ROUND_OF_8_TXT = "/roundOf8.txt";
+    protected static final String SEMI_FINAL_TXT = "/semiFinal.txt";
+    protected static final String FINAL_TXT = "/final.txt";
     private static final String FASE_DE_GRUPOS = "FASE DE GRUPOS";
     private static final String OITAVAS_DE_FINAL = "OITAVAS DE FINAL";
     private static final String QUARTAS_DE_FINAL = "QUARTAS DE FINAL";
@@ -31,16 +33,18 @@ public class FilesService {
 
     protected List<QatarCupMatch> getCupMatches(String fileTxt) {
         List<QatarCupMatch> matchesCup = new ArrayList<>();
-        File file = new File(fileTxt);
-        if (file.isFile())
-            try (FileReader fileReader = new FileReader(file);
-                 BufferedReader br = new BufferedReader(fileReader)) {
+        InputStream inputStream = getClass().getResourceAsStream(fileTxt);
+        if (inputStream == null) {
+            throw new ResourceFileException(THE_RESOURCE_FILE_IS_INVALID);
+        } else {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 String json = br.readLine();
                 mapper.registerModule(new JavaTimeModule());
                 matchesCup = Arrays.asList(mapper.readValue(json, QatarCupMatch[].class));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
         return matchesCup;
     }
 
@@ -50,9 +54,10 @@ public class FilesService {
         if (getStageName(fileName) == null)
             throw new DataScrapingErrorException(THE_UPDATE_FILE_IS_INVALID);
         File file = new File(fileName);
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(json);
-            fileWriter.flush();
+        try (FileWriter fileWriter = new FileWriter(file);
+             BufferedWriter bw = new BufferedWriter(fileWriter)) {
+            bw.write(json);
+            bw.flush();
         } catch (Exception e) {
             throw new DataScrapingErrorException(THE_UPDATE_FILE_IS_INVALID);
         }
