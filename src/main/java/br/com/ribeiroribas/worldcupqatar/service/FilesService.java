@@ -40,7 +40,8 @@ public class FilesService {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 String json = br.readLine();
                 mapper.registerModule(new JavaTimeModule());
-                matchesCup = Arrays.asList(mapper.readValue(json, QatarCupMatch[].class));
+                if (json != null)
+                    matchesCup = Arrays.asList(mapper.readValue(json, QatarCupMatch[].class));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -51,8 +52,6 @@ public class FilesService {
     protected void writeData(List<QatarCupMatch> cupMatches, String fileName) throws IOException {
         mapper.registerModule(new JavaTimeModule());
         String json = mapper.writeValueAsString(cupMatches);
-        if (getStageName(fileName) == null)
-            throw new DataScrapingErrorException(THE_UPDATE_FILE_IS_INVALID);
         File file = new File(fileName);
         try (FileWriter fileWriter = new FileWriter(file);
              BufferedWriter bw = new BufferedWriter(fileWriter)) {

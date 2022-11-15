@@ -31,4 +31,9 @@ public class WorldCupMatchesController {
     private List<Match> getCupMatchesGroupStage() {
         return worldCupMatchesService.getCupMatchesGroupStage();
     }
+
+    @GetMapping("/final/match")
+    private Match getFinalMatch() {
+        return worldCupMatchesService.getFinalMatch();
+    }
 }

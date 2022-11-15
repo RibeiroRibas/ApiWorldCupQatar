@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static br.com.ribeiroribas.worldcupqatar.service.FilesService.FINAL_TXT;
 import static br.com.ribeiroribas.worldcupqatar.service.FilesService.GROUP_STAGE_TXT;
 
 @Service
@@ -62,5 +63,15 @@ public class WorldCupMatchesService {
         return filesService.getCupMatches(GROUP_STAGE_TXT)
                 .stream()
                 .map(Match::new).collect(Collectors.toList());
+    }
+
+    public Match getFinalMatch() {
+        return filesService.getCupMatches(FINAL_TXT)
+                .stream()
+                .map(Match::new)
+                .collect(Collectors.toList())
+                .stream()
+                .findFirst()
+                .get();
     }
 }

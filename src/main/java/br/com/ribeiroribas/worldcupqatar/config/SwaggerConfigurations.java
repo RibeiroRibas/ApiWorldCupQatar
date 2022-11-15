@@ -15,7 +15,7 @@ public class SwaggerConfigurations {
     public GroupedOpenApi costumerApi() {
         return GroupedOpenApi.builder()
                 .group("World Cup Qatar")
-                .pathsToMatch("/qatar","/qatar/*")
+                .pathsToMatch("/qatar","/qatar/{date}","/qatar/final/match")
                 .build();
     }
 
@@ -23,7 +23,7 @@ public class SwaggerConfigurations {
     public OpenAPI docApiRest() {
         return new OpenAPI()
                 .info(new Info().title("World Cup Qatar")
-                        .description("All football matches of FIFA World Cup qualification and FIFA World Cup Qatar.")
+                        .description("All football matches of FIFA World Cup Qatar.")
                         .version("v1.0")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
