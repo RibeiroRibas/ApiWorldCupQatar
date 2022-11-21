@@ -1,6 +1,5 @@
 package br.com.ribeiroribas.worldcupqatar.service;
 
-import br.com.ribeiroribas.worldcupqatar.controller.exceptions.DataScrapingErrorException;
 import br.com.ribeiroribas.worldcupqatar.controller.exceptions.ResourceFileException;
 import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,11 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionMessages.THE_RESOURCE_FILE_IS_INVALID;
-import static br.com.ribeiroribas.worldcupqatar.controller.exceptions.ExceptionMessages.THE_UPDATE_FILE_IS_INVALID;
 
 @Service
 public class FilesService {

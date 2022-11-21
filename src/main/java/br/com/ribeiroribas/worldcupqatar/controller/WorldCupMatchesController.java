@@ -20,19 +20,19 @@ public class WorldCupMatchesController {
     @Autowired
     private WorldCupMatchesService worldCupMatchesService;
 
-    @GetMapping("/{date}")
+    @GetMapping("/matches-by-date/{date}")
     private MatchesByDateDto getByDate(
             @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
     ) {
         return worldCupMatchesService.getCupMatchesByDate(date);
     }
 
-    @GetMapping
+    @GetMapping("/all-matches")
     private List<Match> getCupMatchesGroupStage() {
         return worldCupMatchesService.getCupMatchesGroupStage();
     }
 
-    @GetMapping("/final/match")
+    @GetMapping("/final-match")
     private Match getFinalMatch() {
         return worldCupMatchesService.getFinalMatch();
     }
