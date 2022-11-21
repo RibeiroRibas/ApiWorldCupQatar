@@ -9,10 +9,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(DataScrapingErrorException.class)
-    private ResponseEntity<Object> handleDataScrapingError(DataScrapingErrorException ex) {
-        return ResponseHandler.generateResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler(ResourceFileException.class)
     private ResponseEntity<Object> handleResourceFileError(ResourceFileException ex) {
