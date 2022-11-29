@@ -1,9 +1,13 @@
-package br.com.ribeiroribas.worldcupqatar.model;
+package br.com.ribeiroribas.worldcupqatar.controller.dto;
+
+import br.com.ribeiroribas.worldcupqatar.model.Match;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class QatarCupMatch{
+public class MatchDto {
 
     private String team1;
     private Integer scoreTeam1;
@@ -12,15 +16,25 @@ public class QatarCupMatch{
     private LocalTime matchTime;
     private String groupTeam1;
     private String groupTeam2;
-    private LocalDate matchDate;
-    private String stage;
+    private LocalDate date;
 
-    @Override
-    public String toString() {
-        return "QatarCupMatch{" +
-                "team1='" + team1 + '\'' +
-                ", team2='" + team2 + '\'' +
-                '}';
+    public MatchDto() {
+
+    }
+
+    public MatchDto(Match match) {
+        this.team1 = match.getTeam1();
+        this.team2 = match.getTeam2();
+        this.scoreTeam1 = match.getScoreTeam1();
+        this.scoreTeam2 = match.getScoreTeam2();
+        this.groupTeam1 = match.getGroupTeam1();
+        this.groupTeam2 = match.getGroupTeam2();
+        this.matchTime = match.getMatchTime();
+        this.date = match.getDate();
+    }
+
+    public static List<MatchDto> convert(List<Match> matches) {
+        return matches.stream().map(MatchDto::new).collect(Collectors.toList());
     }
 
     public String getTeam1() {
@@ -79,21 +93,11 @@ public class QatarCupMatch{
         this.groupTeam2 = groupTeam2;
     }
 
-    public String getStage() {
-        return stage;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setStage(String stage) {
-        this.stage = stage;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
-
-    public LocalDate getMatchDate() {
-        return matchDate;
-    }
-
-    public void setMatchDate(LocalDate matchDate) {
-        this.matchDate = matchDate;
-    }
-
-
 }

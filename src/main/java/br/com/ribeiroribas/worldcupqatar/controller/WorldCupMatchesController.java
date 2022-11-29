@@ -1,17 +1,17 @@
 package br.com.ribeiroribas.worldcupqatar.controller;
 
+import br.com.ribeiroribas.worldcupqatar.controller.dto.MatchDto;
 import br.com.ribeiroribas.worldcupqatar.controller.dto.MatchesByDateDto;
 import br.com.ribeiroribas.worldcupqatar.model.Match;
 import br.com.ribeiroribas.worldcupqatar.service.WorldCupMatchesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/qatar")
@@ -27,13 +27,37 @@ public class WorldCupMatchesController {
         return worldCupMatchesService.getCupMatchesByDate(date);
     }
 
+    @GetMapping("/matches-group-stage")
+    private List<MatchDto> getCupMatchesGroupStageUpdate() {
+        List<Match> matches = worldCupMatchesService.getCupMatchesGroupStage();
+        return MatchDto.convert(matches);
+    }
+
     @GetMapping("/all-matches")
-    private List<Match> getCupMatchesGroupStage() {
-        return worldCupMatchesService.getCupMatchesGroupStage();
+    private List<MatchDto> getCupMatchesGroupStage() {
+        List<Match> matches = worldCupMatchesService.getCupMatchesGroupStage();
+        return MatchDto.convert(matches);
     }
 
     @GetMapping("/final-match")
-    private Match getFinalMatch() {
-        return worldCupMatchesService.getFinalMatch();
+    private MatchDto getFinalMatch() {
+        return new MatchDto(worldCupMatchesService.getFinalMatch());
     }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Match> byId = worldCupMatchesService.getById(id);
+        if (byId.isPresent())
+            return ResponseEntity.ok(byId.get());
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping
+    private ResponseEntity<?> update(
+            @RequestBody Match match
+    ) {
+        worldCupMatchesService.update(match);
+        return ResponseEntity.ok().build();
+    }
+
 }

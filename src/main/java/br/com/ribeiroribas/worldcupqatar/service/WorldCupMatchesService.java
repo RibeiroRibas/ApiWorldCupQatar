@@ -3,55 +3,47 @@ package br.com.ribeiroribas.worldcupqatar.service;
 import br.com.ribeiroribas.worldcupqatar.controller.dto.MatchesByDateDto;
 import br.com.ribeiroribas.worldcupqatar.controller.dto.MatchesDto;
 import br.com.ribeiroribas.worldcupqatar.model.Match;
-import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
+import br.com.ribeiroribas.worldcupqatar.repository.MatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static br.com.ribeiroribas.worldcupqatar.service.FilesService.FINAL_TXT;
-import static br.com.ribeiroribas.worldcupqatar.service.FilesService.GROUP_STAGE_TXT;
+import java.util.Optional;
 
 @Service
 public class WorldCupMatchesService {
 
+    public static final String GROUP_STAGE = "FASE DE GRUPOS";
+    public static final LocalDate MATCH_FINAL_DATE = LocalDate.of(2022, 12, 18);
+    public static final String A_CONFIRMAR = "A Confirmar";
     @Autowired
-    private FilesService filesService;
+    private MatchRepository repository;
 
     public MatchesByDateDto getCupMatchesByDate(LocalDate date) {
-        List<QatarCupMatch> cupMatches = filesService.getCupMatches();
 
-        List<QatarCupMatch> cupMatchesByDate = cupMatches
-                .stream()
-                .filter(match ->
-                        match.getMatchDate().equals(date))
-                .collect(Collectors.toList());
+        List<Match> cupMatchesByDate = repository.findByDate(date);
 
         MatchesByDateDto matchesDto = new MatchesByDateDto();
 
-        cupMatchesByDate.stream().findFirst().ifPresent(match -> {
-            matchesDto.setStage(match.getStage());
-        });
-
         List<MatchesDto> matchesByDate = new ArrayList<>();
         cupMatchesByDate.forEach(matchByDate -> {
-
-            List<QatarCupMatch> matchesTeam1 = cupMatches.stream().filter(match ->
-                    matchByDate.getTeam1().equals(match.getTeam1())
-                            || matchByDate.getTeam1().equals(match.getTeam2())
-            ).collect(Collectors.toList());
-
-            List<QatarCupMatch> matchesTeam2 = cupMatches.stream().filter(match ->
-                    matchByDate.getTeam2().equals(match.getTeam1())
-                            || matchByDate.getTeam2().equals(match.getTeam2())
-
-            ).collect(Collectors.toList());
-
-            matchesByDate.add(new MatchesDto(new Match(matchByDate), matchesTeam1, matchesTeam2));
-
+            List<Match> matchesTeam1 = new ArrayList<>();
+            List<Match> matchesTeam2 = new ArrayList<>();
+            if (!matchByDate.getTeam1().equals(A_CONFIRMAR)
+                    && !matchByDate.getTeam1().startsWith("1")
+                    && !matchByDate.getTeam1().startsWith("2")) {
+                matchesTeam1.addAll(repository.findByTeam1(matchByDate.getTeam1()));
+                matchesTeam1.addAll(repository.findByTeam2(matchByDate.getTeam1()));
+            }
+            if (!matchByDate.getTeam2().equals(A_CONFIRMAR)
+                    && !matchByDate.getTeam2().startsWith("1")
+                    && !matchByDate.getTeam2().startsWith("2")) {
+                matchesTeam2.addAll(repository.findByTeam1(matchByDate.getTeam2()));
+                matchesTeam2.addAll(repository.findByTeam2(matchByDate.getTeam2()));
+            }
+            matchesByDate.add(new MatchesDto(matchByDate, matchesTeam1, matchesTeam2));
         });
 
         matchesDto.setMatches(matchesByDate);
@@ -60,18 +52,29 @@ public class WorldCupMatchesService {
     }
 
     public List<Match> getCupMatchesGroupStage() {
-        return filesService.getCupMatches(GROUP_STAGE_TXT)
-                .stream()
-                .map(Match::new).collect(Collectors.toList());
+        return repository.findByStage(GROUP_STAGE);
     }
 
     public Match getFinalMatch() {
-        return filesService.getCupMatches(FINAL_TXT)
-                .stream()
-                .map(Match::new)
-                .collect(Collectors.toList())
-                .stream()
-                .findFirst()
-                .get();
+        return repository.findByDate(MATCH_FINAL_DATE).stream().findFirst().get();
+    }
+
+    public void saveAll(List<Match> matches) {
+        repository.saveAll(matches);
+    }
+
+
+    public List<Match> findAll() {
+        return repository.findAll();
+    }
+
+    public void update(Match match) {
+        Match referenceById = repository.getReferenceById(match.getId());
+        referenceById.update(match);
+        repository.save(referenceById);
+    }
+
+    public Optional<Match> getById(Long id) {
+        return repository.findById(id);
     }
 }

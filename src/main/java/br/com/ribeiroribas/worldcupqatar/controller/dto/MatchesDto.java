@@ -1,46 +1,45 @@
 package br.com.ribeiroribas.worldcupqatar.controller.dto;
 
 import br.com.ribeiroribas.worldcupqatar.model.Match;
-import br.com.ribeiroribas.worldcupqatar.model.QatarCupMatch;
 
 import java.util.List;
 
 public class MatchesDto {
 
-    private Match match;
-    private List<Match> matchesTeam1;
-    private List<Match> matchesTeam2;
+    private MatchDto match;
+    private List<MatchDto> matchesTeam1;
+    private List<MatchDto> matchesTeam2;
 
     public MatchesDto() {
     }
 
-    public MatchesDto(Match match, List<QatarCupMatch> matchesTeam1, List<QatarCupMatch> matchesTeam2) {
-        this.match = match;
-        this.matchesTeam1 = Match.convert(matchesTeam1);
-        this.matchesTeam2 = Match.convert(matchesTeam2);
+    public MatchesDto(Match match, List<Match> matchesTeam1, List<Match> matchesTeam2) {
+        this.match = new MatchDto(match);
+        this.matchesTeam1 = MatchDto.convert(matchesTeam1);
+        this.matchesTeam2 = MatchDto.convert(matchesTeam2);
     }
 
-    public Match getMatch() {
+    public MatchDto getMatch() {
         return match;
     }
 
-    public void setMatch(Match match) {
+    public void setMatch(MatchDto match) {
         this.match = match;
     }
 
-    public List<Match> getMatchesTeam1() {
+    public List<MatchDto> getMatchesTeam1() {
         return matchesTeam1;
     }
 
-    public void setMatchesTeam1(List<Match> matchesTeam1) {
+    public void setMatchesTeam1(List<MatchDto> matchesTeam1) {
         this.matchesTeam1 = matchesTeam1;
     }
 
-    public List<Match> getMatchesTeam2() {
+    public List<MatchDto> getMatchesTeam2() {
         return matchesTeam2;
     }
 
-    public void setMatchesTeam2(List<Match> matchesTeam2) {
+    public void setMatchesTeam2(List<MatchDto> matchesTeam2) {
         this.matchesTeam2 = matchesTeam2;
     }
 }
